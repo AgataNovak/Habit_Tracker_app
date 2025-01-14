@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -8,11 +9,12 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("DJANGO_SECRETE_KEY")
+# SECRET_KEY = os.getenv("DJANGO_SECRETE_KEY")
+SECRET_KEY = "django-insecure-*m-pd&06$rt1ho=%k#3+k%fe71%#wf9wvzgif557j*pdrks$g#"
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -65,11 +67,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("DATABASE_NAME"),
-        "USER": os.getenv("DATABASE_USER"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-        "HOST": os.getenv("DATABASE_HOST"),
-        "PORT": os.getenv("DATABASE_PORT"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
     }
 }
 
@@ -99,8 +101,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_URL = "static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -127,9 +130,9 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_BROKER_URL = "redis://redis:6379"
 
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
 
 CELERY_TIMEZONE = TIME_ZONE
 
@@ -146,10 +149,35 @@ CELERY_BEAT_SCHEDULE = {
 
 TELEGRAM_URL = "https://api.telegram.ord/bot"
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:8000"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://84.201.167.205",
+    "https://84.201.167.205",
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:8000",
+    "http://84.201.167.205",
+    "https://84.201.167.205",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
+
+LOGIN_REDIRECT_URL = "habit_tracker:habits_list"
+
+LOGIN_URL = "users:login"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+    }
+}
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "test_db_sqlite3",
+        }
+    }
