@@ -1,8 +1,8 @@
-from API_services import send_telegram_message
+from .API_services import send_telegram_message
 
 from users.models import User
 
-from models import Habit
+from .models import Habit
 
 
 def send_telegram_notification():
