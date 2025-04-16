@@ -1,5 +1,4 @@
-Course Project num.5 
-by Agata Gorskaia
+Habit Tracjer app 
 
 Инструкция к использованию проекта:
 
